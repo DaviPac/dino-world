@@ -51,6 +51,7 @@ function create() {
     player.setCollideWorldBounds(true);
     player.setSize(12, 20);
     player.setScale(1.5);
+    
     this.anims.create({
         key: 'walk_down',
         frames: this.anims.generateFrameNumbers('player_walk', { start: 0, end: 5 }),
