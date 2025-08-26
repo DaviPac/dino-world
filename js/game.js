@@ -10,6 +10,12 @@ const config = {
             debug: false
         }
     },
+    scale: {
+        mode: Phaser.Scale.FIT,       // mantém proporção, comprime se precisar
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: 980,                  // resolução base
+        height: 580                  // resolução base
+    },
     scene: {
         preload: preload,
         create: create,
