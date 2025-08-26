@@ -53,7 +53,7 @@ function preload() {
 }
 
 function create() {
-    if (this.sys.game.device.input.touch || true) {
+    if (this.sys.game.device.input.touch) {
 
         // 1. Posição base do D-Pad na tela (canto inferior esquerdo)
         const dpadX = 120;
