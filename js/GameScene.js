@@ -1,6 +1,7 @@
 import Player from "./objects/Player.js";
 import Tree from "./objects/Tree.js";
 import { isInCuttingRange } from "./utils/range.js";
+import { isMobile } from "./utils/isMobile.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -36,7 +37,7 @@ export default class GameScene extends Phaser.Scene {
     create() {
         this.dpadState = {};
         this.objects = [];
-        if (this.sys.game.device.input.touch || true) this.createDPad();
+        if (isMobile(this)) this.createDPad();
 
         this.map = this.make.tilemap({ key: 'mapa_mundo' });
         const tileset1 = this.map.addTilesetImage('Tileset Grass Spring', 'tiles_terreno');

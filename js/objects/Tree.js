@@ -12,5 +12,6 @@ export default class Tree extends Phaser.Physics.Arcade.Sprite {
 
     onAxeHit() {
         this.setFrame(4);
+        this.setSize(20, 25).setOffset(6, 37);
     }
 }

@@ -1,3 +1,5 @@
+import Axe from "./items/axe.js";
+
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'player_idle');
@@ -16,9 +18,16 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.axe = false;
         this.canMove = true;
 
+        this.inventory = [new Axe()];
+        this.inventoryIndex = 0;
+
         Object.defineProperty(this, "facing", {
             get: () => this.lastDirection,
             set: (value) => { this.lastDirection = value; }
+        });
+        Object.defineProperty(this, "equippedItem", {
+            get: () => this.inventory[this.inventoryIndex],
+            set: (value) => { this.inventory[this.inventoryIndex] = value }
         });
     }
 
@@ -43,7 +52,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         const rightPressed = cursors.right.isDown || dpadState.right;
         const upPressed = cursors.up.isDown || dpadState.up;
         const downPressed = cursors.down.isDown || dpadState.down;
-        const axePressed = cursors.space.isDown || dpadState.use;
+        const usePressed = cursors.space.isDown || dpadState.use;
 
         let isMoving = false;
 
@@ -78,11 +87,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             isMoving = true;
         }
 
-        if (axePressed && !this.axe) {
-            this.setVelocityY(0);
-            this.setVelocityX(0);
-            this.canMove = false;
-            this.axe = true;
+        if (usePressed && !this.axe) {
+            this.equippedItem.use(this);
         }
 
         if (this.axe && this.frame.name == 5 || this.frame.name == 11 || this.frame.name == 17) {
@@ -121,5 +127,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
                 this.anims.play('idle_down', true);
             }
         }
+    }
+
+    swingAxe() {
+        this.setVelocityY(0);
+        this.setVelocityX(0);
+        this.canMove = false;
+        this.axe = true;
     }
 }
