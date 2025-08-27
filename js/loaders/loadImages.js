@@ -4,4 +4,5 @@ export default function loadImages(scene) {
     scene.load.image('dpad', 'assets/dpad.png');
     scene.load.image('dpad-use-button', 'assets/dpad-use-button.png');
     scene.load.image('inventory-slots', 'assets/sprites/pack/ui/Inventory/inventory-slots.png');
+    scene.load.image('selected-slot', 'assets/sprites/pack/ui/Inventory/selected.png');
 }

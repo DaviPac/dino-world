@@ -2,6 +2,7 @@ import Player from "../objects/Player.js";
 import Tree from "../objects/Tree.js";
 import { isInCuttingRange } from "../utils/range.js";
 import { isMobile } from "../utils/isMobile.js";
+import InventoryUI from "../objects/InventoryUI.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -60,10 +61,12 @@ export default class GameScene extends Phaser.Scene {
         // 3. Aplica um zoom (ex: 2x)
         this.cameras.main.setZoom(3);
 
-        this.createInventorySlots();
+        this.inventoryUI = new InventoryUI(this);
+        this.inventoryUI.createInventorySlots();
     }
 
     update() {
+        this.inventoryUI.updateInventorySlots();
         if (Phaser.Input.Keyboard.JustDown(this.cursors.muteKey)) {
             this.toggleMusic();
         }
@@ -138,49 +141,6 @@ export default class GameScene extends Phaser.Scene {
                 this.dpadState[directions[index]] = false;
             });
         });
-    }
-
-    createInventorySlots() {
-
-        const inventoryX = this.scale.width - 495;
-        const inventoryY = this.scale.height - 215;
-        const inventoryItemX = inventoryX - 67;
-        const inventoryItemY = inventoryY + 1;
-
-        const inventoryImage = this.add.image(inventoryX, inventoryY, 'inventory-slots');
-        inventoryImage.setScrollFactor(0);
-        inventoryImage.setAlpha(0.7);
-        inventoryImage.setDepth(30);
-
-        const hitAreaSize = 16;
-        const hitAreaOffset = 19;
-
-        const hitAreaOne = this.add.rectangle(inventoryItemX, inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaTwo = this.add.rectangle(inventoryItemX + (hitAreaOffset), inventoryItemY , hitAreaSize, hitAreaSize);
-        const hitAreaThree = this.add.rectangle(inventoryItemX + (2 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaFour = this.add.rectangle(inventoryItemX + (3 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaFive = this.add.rectangle(inventoryItemX + (4 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaSix= this.add.rectangle(inventoryItemX + (5 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaSeven = this.add.rectangle(inventoryItemX + (6 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-        const hitAreaEight = this.add.rectangle(inventoryItemX + (7 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
-
-        const zones = [hitAreaOne, hitAreaTwo, hitAreaThree, hitAreaFour, hitAreaFive, hitAreaSix, hitAreaSeven, hitAreaEight];
-
-        zones.forEach((zone, index) => {
-            zone.setScrollFactor(0);
-            zone.setDepth(31);
-            zone.setInteractive();
-
-            zone.on('pointerdown', () => {
-                if (this.player && this.player.inventory[index]) this.player.inventoryIndex = index;
-            });
-        });
-
-        this.player.inventory.forEach((item, index) => {
-            const itemImage = this.add.image(inventoryItemX + (index * hitAreaOffset), inventoryItemY, item.icon.key, item.icon.frame);
-            itemImage.setScrollFactor(0);
-            itemImage.setDepth(31);
-        })
     }
 
     toggleMusic() {
