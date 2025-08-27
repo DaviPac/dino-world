@@ -55,19 +55,19 @@ export default class GameScene extends Phaser.Scene {
                 zone.setInteractive();
 
                 zone.on('pointerdown', () => {
-                    dpadState[directions[index]] = true;
+                    this.dpadState[directions[index]] = true;
                 });
                 zone.on('pointerover', (pointer) =>
                 {
                     if (pointer.isDown) {
-                        dpadState[directions[index]] = true;
+                        this.dpadState[directions[index]] = true;
                     }
                 });
                 zone.on('pointerup', () => {
-                    dpadState[directions[index]] = false;
+                    this.dpadState[directions[index]] = false;
                 });
                 zone.on('pointerout', () => {
-                    dpadState[directions[index]] = false;
+                    this.dpadState[directions[index]] = false;
                 });
             });
 
