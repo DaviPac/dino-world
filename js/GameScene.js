@@ -26,11 +26,11 @@ export default class GameScene extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32
         });
-        this.load.spritesheet('player_fish_idle', 'assets/sprites/pack/char/Character/Pre-made/Josh/fishing/wait.png', {
+        this.load.spritesheet('player_fish_idle', 'assets/sprites/pack/char/Character/Pre-made/Josh/Fishing/wait.png', {
             frameWidth: 64,
             frameHeight: 64
         });
-        this.load.spritesheet('player_fish_captured', 'assets/sprites/pack/char/Character/Pre-made/Josh/fishing/captured.png', {
+        this.load.spritesheet('player_fish_captured', 'assets/sprites/pack/char/Character/Pre-made/Josh/Fishing/captured.png', {
             frameWidth: 64,
             frameHeight: 64
         });
