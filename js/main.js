@@ -1,4 +1,5 @@
-import GameScene from "./GameScene.js";
+import PreloaderScene from "./scenes/PreloaderScene.js";
+import GameScene from "./scenes/GameScene.js";
 
 const config = {
     type: Phaser.AUTO,
@@ -22,7 +23,7 @@ const config = {
         height: 580
     },
     // Diz ao Phaser para usar a nossa classe GameScene
-    scene: [GameScene] 
+    scene: [PreloaderScene, GameScene] 
 };
 
 const game = new Phaser.Game(config);

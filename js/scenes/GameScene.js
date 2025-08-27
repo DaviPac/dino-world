@@ -1,48 +1,16 @@
-import Player from "./objects/Player.js";
-import Tree from "./objects/Tree.js";
-import { isInCuttingRange } from "./utils/range.js";
-import { isMobile } from "./utils/isMobile.js";
+import Player from "../objects/Player.js";
+import Tree from "../objects/Tree.js";
+import { isInCuttingRange } from "../utils/range.js";
+import { isMobile } from "../utils/isMobile.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
         this.dpadState = {};
         this.objects = [];
-    }
-
-    preload() {
-        this.load.image('tiles_terreno', 'assets/sprites/pack/farm/Tileset/Modular/tileset-grass-spring.png');
-        this.load.image('tiles_ground', 'assets/sprites/pack/farm/Tileset/Modular/Ground.png');
-        this.load.tilemapTiledJSON('mapa_mundo', 'assets/maps/map/map1.json');
-        this.load.spritesheet('player_idle', 'assets/sprites/pack/char/Character/Pre-made/Josh/Idle.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.spritesheet('player_walk', 'assets/sprites/pack/char/Character/Pre-made/Josh/Walk.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.spritesheet('player_axe', 'assets/sprites/pack/char/Character/Pre-made/Josh/Axe.png', {
-            frameWidth: 32,
-            frameHeight: 32
-        });
-        this.load.spritesheet('player_fish_idle', 'assets/sprites/pack/char/Character/Pre-made/Josh/Fishing/wait.png', {
-            frameWidth: 64,
-            frameHeight: 64
-        });
-        this.load.spritesheet('player_fish_captured', 'assets/sprites/pack/char/Character/Pre-made/Josh/Fishing/captured.png', {
-            frameWidth: 64,
-            frameHeight: 64
-        });
-        this.load.spritesheet('tree', 'assets/tree.png', {
-            frameWidth: 32,
-            frameHeight: 48
-        });
-        this.load.image('dpad', 'assets/dpad.png');
-        this.load.image('dpad-use-button', 'assets/dpad-use-button.png');
-
-        this.load.audio('bg_music_1', 'assets/sounds/overworld/bg_music_1.ogg');
-        this.load.audio('axe-tree', 'assets/sounds/tools/axe-tree.wav');
+        this.musicPlaying = true;
+        const temp = localStorage.getItem('music');
+        if (temp && temp === "false") this.musicPlaying = false;
     }
 
     create() {
@@ -70,6 +38,7 @@ export default class GameScene extends Phaser.Scene {
         this.objects.push(new Tree(this, 280, 185));
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors.muteKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
         this.cursors.one = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
         this.cursors.two = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
 
@@ -80,7 +49,7 @@ export default class GameScene extends Phaser.Scene {
 
         const bgMusic = this.sound.add('bg_music_1', { 
             loop: true,
-            volume: 1.5
+            volume: this.musicPlaying ? 1.5 : 0
         });
         
         bgMusic.play();
@@ -90,9 +59,14 @@ export default class GameScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
         // 3. Aplica um zoom (ex: 2x)
         this.cameras.main.setZoom(3);
+
+        this.createInventorySlots();
     }
 
     update() {
+        if (Phaser.Input.Keyboard.JustDown(this.cursors.muteKey)) {
+            this.toggleMusic();
+        }
         if (this.player) {
             this.player.update(this.cursors, this.dpadState);
             if (this.player.axeHit) {
@@ -164,6 +138,58 @@ export default class GameScene extends Phaser.Scene {
                 this.dpadState[directions[index]] = false;
             });
         });
+    }
 
+    createInventorySlots() {
+
+        const inventoryX = this.scale.width - 495;
+        const inventoryY = this.scale.height - 215;
+        const inventoryItemX = inventoryX - 67;
+        const inventoryItemY = inventoryY + 1;
+
+        const inventoryImage = this.add.image(inventoryX, inventoryY, 'inventory-slots');
+        inventoryImage.setScrollFactor(0);
+        inventoryImage.setAlpha(0.7);
+        inventoryImage.setDepth(30);
+
+        const hitAreaSize = 16;
+        const hitAreaOffset = 19;
+
+        const hitAreaOne = this.add.rectangle(inventoryItemX, inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaTwo = this.add.rectangle(inventoryItemX + (hitAreaOffset), inventoryItemY , hitAreaSize, hitAreaSize);
+        const hitAreaThree = this.add.rectangle(inventoryItemX + (2 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaFour = this.add.rectangle(inventoryItemX + (3 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaFive = this.add.rectangle(inventoryItemX + (4 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaSix= this.add.rectangle(inventoryItemX + (5 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaSeven = this.add.rectangle(inventoryItemX + (6 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+        const hitAreaEight = this.add.rectangle(inventoryItemX + (7 * hitAreaOffset), inventoryItemY, hitAreaSize, hitAreaSize);
+
+        const zones = [hitAreaOne, hitAreaTwo, hitAreaThree, hitAreaFour, hitAreaFive, hitAreaSix, hitAreaSeven, hitAreaEight];
+
+        zones.forEach((zone, index) => {
+            zone.setScrollFactor(0);
+            zone.setDepth(31);
+            zone.setInteractive();
+
+            zone.on('pointerdown', () => {
+                if (this.player && this.player.inventory[index]) this.player.inventoryIndex = index;
+            });
+        });
+
+        this.player.inventory.forEach((item, index) => {
+            const itemImage = this.add.image(inventoryItemX + (index * hitAreaOffset), inventoryItemY, item.icon.key, item.icon.frame);
+            itemImage.setScrollFactor(0);
+            itemImage.setDepth(31);
+        })
+    }
+
+    toggleMusic() {
+        this.musicPlaying = !this.musicPlaying;
+        localStorage.setItem('music', !this.musicPlaying);
+        let music = this.sound.get('bg_music_1');
+        if (this.musicPlaying) {
+            if (music) music.setVolume(0);
+        }
+        else if (music) music.setVolume(1.5);
     }
 }
