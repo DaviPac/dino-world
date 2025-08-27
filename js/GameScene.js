@@ -1,4 +1,6 @@
-import Player from "./Player.js";
+import Player from "./objects/Player.js";
+import Tree from "./objects/Tree.js";
+import { isInCuttingRange } from "./utils/range.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -17,61 +19,24 @@ export default class GameScene extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32
         });
+        this.load.spritesheet('player_axe', 'assets/sprites/pack/char/Character/Pre-made/Josh/Axe.png', {
+            frameWidth: 32,
+            frameHeight: 32
+        });
         this.load.spritesheet('tree', 'assets/tree.png', {
             frameWidth: 32,
             frameHeight: 48
         });
         this.load.image('dpad', 'assets/dpad.png');
+        this.load.image('dpad-use-button', 'assets/dpad-use-button.png');
 
         this.load.audio('bg_music_1', 'assets/sounds/overworld/bg_music_1.ogg');
     }
 
     create() {
-        this.dpadState = { up: false, down: false, left: false, right: false };
-        if (this.sys.game.device.input.touch) {
-
-            const dpadX = 120;
-            const dpadY = 480;
-
-            const dpadImage = this.add.image(dpadX, dpadY, 'dpad');
-            dpadImage.setScrollFactor(0);
-            dpadImage.setAlpha(0.7);
-            dpadImage.setDepth(30);
-
-            const hitAreaSize = 60;
-            const hitAreaOffset = 50;
-
-            const hitAreaUp = this.add.rectangle(dpadX, dpadY - hitAreaOffset, hitAreaSize, hitAreaSize);
-            const hitAreaDown = this.add.rectangle(dpadX, dpadY + hitAreaOffset, hitAreaSize, hitAreaSize);
-            const hitAreaLeft = this.add.rectangle(dpadX - hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
-            const hitAreaRight = this.add.rectangle(dpadX + hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
-
-            const zones = [hitAreaUp, hitAreaDown, hitAreaLeft, hitAreaRight];
-            const directions = ['up', 'down', 'left', 'right'];
-
-            zones.forEach((zone, index) => {
-                zone.setScrollFactor(0);
-                zone.setDepth(31);
-                zone.setInteractive();
-
-                zone.on('pointerdown', () => {
-                    this.dpadState[directions[index]] = true;
-                });
-                zone.on('pointerover', (pointer) =>
-                {
-                    if (pointer.isDown) {
-                        this.dpadState[directions[index]] = true;
-                    }
-                });
-                zone.on('pointerup', () => {
-                    this.dpadState[directions[index]] = false;
-                });
-                zone.on('pointerout', () => {
-                    this.dpadState[directions[index]] = false;
-                });
-            });
-
-        }
+        this.dpadState = {};
+        this.objects = [];
+        if (this.sys.game.device.input.touch || true) this.createDPad();
 
         this.map = this.make.tilemap({ key: 'mapa_mundo' });
         const tileset1 = this.map.addTilesetImage('Tileset Grass Spring', 'tiles_terreno');
@@ -87,15 +52,19 @@ export default class GameScene extends Phaser.Scene {
         this.player = new Player(this, 100, 100);
         this.player.createAnims();
 
-        let tree = this.physics.add.sprite(200, 120, 'tree', 3);
-        tree.setImmovable(true);
-        tree.body.setSize(20, 39).setOffset(6, 23);
-        tree.setDepth(10);
+        this.objects.push(new Tree(this, 200, 115));
+        this.objects.push(new Tree(this, 240, 115));
+        this.objects.push(new Tree(this, 280, 115));
+        this.objects.push(new Tree(this, 200, 185));
+        this.objects.push(new Tree(this, 240, 185));
+        this.objects.push(new Tree(this, 280, 185));
 
         this.cursors = this.input.keyboard.createCursorKeys();
 
         this.physics.add.collider(this.player, chaoLayer);
-        this.physics.add.collider(this.player, tree);
+        this.objects.forEach((object) => {
+            if (object.collide) this.physics.add.collider(this.player, object);
+        });
 
         const bgMusic = this.sound.add('bg_music_1', { 
             loop: true,
@@ -103,11 +72,83 @@ export default class GameScene extends Phaser.Scene {
         });
         
         bgMusic.play();
+
+        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
+        // 2. Faz a câmara seguir o jogador
+        this.cameras.main.startFollow(this.player);
+        // 3. Aplica um zoom (ex: 2x)
+        this.cameras.main.setZoom(4);
     }
 
     update() {
         if (this.player) {
             this.player.update(this.cursors, this.dpadState);
+            if (this.player.axe) {
+                this.objects.forEach((object) => {
+                    if (isInCuttingRange(this.player, object) && object.onAxeHit) {
+                        object.onAxeHit();
+                    }
+                })
+            }
         }
+    }
+
+    createDPad() {
+        this.dpadState = { up: false, down: false, left: false, right: false, use: false };
+
+        const dpadX = 120;
+        const dpadY = 480;
+
+        const btnX = 480;
+        const btnY = 480;
+
+        const dpadImage = this.add.image(dpadX, dpadY, 'dpad');
+        dpadImage.setScrollFactor(0);
+        dpadImage.setAlpha(0.7);
+        dpadImage.setDepth(30);
+
+        const dpadUseButton = this.add.image(btnX, btnY, 'dpad-use-button');
+        dpadUseButton.setScale(0.25);
+        dpadUseButton.setAlpha(0.7);
+        dpadUseButton.setDepth(30);
+
+        const hitAreaSize = 60;
+        const hitAreaOffset = 50;
+
+        const hitAreaUp = this.add.rectangle(dpadX, dpadY - hitAreaOffset, hitAreaSize, hitAreaSize);
+        const hitAreaDown = this.add.rectangle(dpadX, dpadY + hitAreaOffset, hitAreaSize, hitAreaSize);
+        const hitAreaLeft = this.add.rectangle(dpadX - hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
+        const hitAreaRight = this.add.rectangle(dpadX + hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
+
+        const btnAreaSize = 120;
+        const btnAreaOffset = 0;
+
+        const hitAreaUse = this.add.rectangle(btnX + btnAreaOffset, btnY, btnAreaSize);
+
+        const zones = [hitAreaUp, hitAreaDown, hitAreaLeft, hitAreaRight, hitAreaUse];
+        const directions = ['up', 'down', 'left', 'right', 'use'];
+
+        zones.forEach((zone, index) => {
+            zone.setScrollFactor(0);
+            zone.setDepth(31);
+            zone.setInteractive();
+
+            zone.on('pointerdown', () => {
+                this.dpadState[directions[index]] = true;
+            });
+            zone.on('pointerover', (pointer) =>
+            {
+                if (pointer.isDown) {
+                    this.dpadState[directions[index]] = true;
+                }
+            });
+            zone.on('pointerup', () => {
+                this.dpadState[directions[index]] = false;
+            });
+            zone.on('pointerout', () => {
+                this.dpadState[directions[index]] = false;
+            });
+        });
+
     }
 }
