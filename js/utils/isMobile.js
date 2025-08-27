@@ -1,1 +1,1 @@
-export const isMobile = (obj) => obj.sys.game.device.input.touch; 
+export const isMobile = (scene) => scene.game.device.input.touch;

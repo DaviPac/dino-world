@@ -6,6 +6,8 @@ import { isMobile } from "./utils/isMobile.js";
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
+        this.dpadState = {};
+        this.objects = [];
     }
 
     preload() {
@@ -35,8 +37,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
-        this.dpadState = {};
-        this.objects = [];
         if (isMobile(this)) this.createDPad();
 
         this.map = this.make.tilemap({ key: 'mapa_mundo' });
@@ -78,7 +78,7 @@ export default class GameScene extends Phaser.Scene {
         // 2. Faz a câmara seguir o jogador
         this.cameras.main.startFollow(this.player);
         // 3. Aplica um zoom (ex: 2x)
-        this.cameras.main.setZoom(4);
+        this.cameras.main.setZoom(3);
     }
 
     update() {
@@ -97,34 +97,36 @@ export default class GameScene extends Phaser.Scene {
     createDPad() {
         this.dpadState = { up: false, down: false, left: false, right: false, use: false };
 
-        const dpadX = 120;
-        const dpadY = 480;
+        const dpadX = this.scale.width - 605;
+        const dpadY = this.scale.height - 245;
 
-        const btnX = 480;
-        const btnY = 480;
+        const btnX = this.scale.width - 370;
+        const btnY = this.scale.height - 245;
 
         const dpadImage = this.add.image(dpadX, dpadY, 'dpad');
         dpadImage.setScrollFactor(0);
         dpadImage.setAlpha(0.7);
         dpadImage.setDepth(30);
+        dpadImage.setScale(0.4);
 
         const dpadUseButton = this.add.image(btnX, btnY, 'dpad-use-button');
-        dpadUseButton.setScale(0.25);
+        dpadUseButton.setScrollFactor(0);
+        dpadUseButton.setScale(0.1);
         dpadUseButton.setAlpha(0.7);
         dpadUseButton.setDepth(30);
 
-        const hitAreaSize = 60;
-        const hitAreaOffset = 50;
+        const hitAreaSize = 27;
+        const hitAreaOffset = 20;
 
         const hitAreaUp = this.add.rectangle(dpadX, dpadY - hitAreaOffset, hitAreaSize, hitAreaSize);
         const hitAreaDown = this.add.rectangle(dpadX, dpadY + hitAreaOffset, hitAreaSize, hitAreaSize);
         const hitAreaLeft = this.add.rectangle(dpadX - hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
         const hitAreaRight = this.add.rectangle(dpadX + hitAreaOffset, dpadY, hitAreaSize, hitAreaSize);
 
-        const btnAreaSize = 120;
+        const btnAreaSize = 25.6;
         const btnAreaOffset = 0;
 
-        const hitAreaUse = this.add.rectangle(btnX + btnAreaOffset, btnY, btnAreaSize);
+        const hitAreaUse = this.add.circle(btnX + btnAreaOffset, btnY, btnAreaSize);
 
         const zones = [hitAreaUp, hitAreaDown, hitAreaLeft, hitAreaRight, hitAreaUse];
         const directions = ['up', 'down', 'left', 'right', 'use'];
