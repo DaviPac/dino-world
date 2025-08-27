@@ -26,6 +26,14 @@ export default class GameScene extends Phaser.Scene {
             frameWidth: 32,
             frameHeight: 32
         });
+        this.load.spritesheet('player_fish_idle', 'assets/sprites/pack/char/Character/Pre-made/Josh/fishing/wait.png', {
+            frameWidth: 64,
+            frameHeight: 64
+        });
+        this.load.spritesheet('player_fish_captured', 'assets/sprites/pack/char/Character/Pre-made/Josh/fishing/captured.png', {
+            frameWidth: 64,
+            frameHeight: 64
+        });
         this.load.spritesheet('tree', 'assets/tree.png', {
             frameWidth: 32,
             frameHeight: 48
@@ -34,6 +42,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('dpad-use-button', 'assets/dpad-use-button.png');
 
         this.load.audio('bg_music_1', 'assets/sounds/overworld/bg_music_1.ogg');
+        this.load.audio('axe-tree', 'assets/sounds/tools/axe-tree.wav');
     }
 
     create() {
@@ -61,6 +70,8 @@ export default class GameScene extends Phaser.Scene {
         this.objects.push(new Tree(this, 280, 185));
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        this.cursors.one = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.cursors.two = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
 
         this.physics.add.collider(this.player, chaoLayer);
         this.objects.forEach((object) => {
@@ -84,12 +95,13 @@ export default class GameScene extends Phaser.Scene {
     update() {
         if (this.player) {
             this.player.update(this.cursors, this.dpadState);
-            if (this.player.axe) {
+            if (this.player.axeHit) {
                 this.objects.forEach((object) => {
                     if (isInCuttingRange(this.player, object) && object.onAxeHit) {
                         object.onAxeHit();
                     }
-                })
+                });
+                this.player.axeHit = false;
             }
         }
     }
