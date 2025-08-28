@@ -27,7 +27,7 @@ export default class Tree extends Phaser.Physics.Arcade.Sprite {
 
         this.scene.sound.play('axe-tree', { volume: 0.8 });
 
-        if (this.hp <= 0) {
+        if (this.hp == 0) {
             this.setFrame(4);
             this.setSize(20, 25).setOffset(6, 37);
             let offsetX = Phaser.Math.Between(-20, 20);
