@@ -22,7 +22,6 @@ const config = {
         width: 980,
         height: 580
     },
-    // Diz ao Phaser para usar a nossa classe GameScene
     scene: [PreloaderScene, GameScene] 
 };
 

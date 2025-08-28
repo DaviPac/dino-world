@@ -28,8 +28,8 @@ export default class InventoryUI {
 
             slot.on('pointerdown', () => {
                 this.selectedIndex = i;
-                if (this.scene.player && this.scene.player.inventory[i]) {
-                    this.scene.player.inventoryIndex = i;
+                if (this.scene.player && this.scene.player.inventory.items[i]) {
+                    this.scene.player.inventory.setSelectedIndex(i);
                 }
                 this.updateInventorySlots();
                 this.updateSelectedSlot();
@@ -56,7 +56,7 @@ export default class InventoryUI {
         this.itemImages.forEach(img => img.destroy());
         this.itemImages = [];
 
-        this.scene.player.inventory.forEach((item, index) => {
+        this.scene.player.inventory.items.forEach((item, index) => {
             const icon = item.icon;
             const frame = icon.frame ?? undefined;
 
@@ -71,7 +71,7 @@ export default class InventoryUI {
     }
 
     updateSelectedSlot() {
-        if (this.scene.player.inventoryIndex === null) {
+        if (this.scene.player.inventory.selectedIndex === null) {
             this.selectedSlotImage.setVisible(false);
             return;
         }
@@ -82,7 +82,7 @@ export default class InventoryUI {
         const inventoryItemY = inventoryY + 1;
         const hitAreaOffset = 19;
 
-        const slotX = inventoryItemX + this.scene.player.inventoryIndex * hitAreaOffset;
+        const slotX = inventoryItemX + this.scene.player.inventory.selectedIndex * hitAreaOffset;
         const slotY = inventoryItemY;
 
         this.selectedSlotImage.setPosition(slotX, slotY);

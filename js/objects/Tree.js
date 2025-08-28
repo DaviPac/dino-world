@@ -1,3 +1,5 @@
+import WoodLog from "./WoodLog.js";
+
 export default class Tree extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'tree', 3);
@@ -28,6 +30,12 @@ export default class Tree extends Phaser.Physics.Arcade.Sprite {
         if (this.hp <= 0) {
             this.setFrame(4);
             this.setSize(20, 25).setOffset(6, 37);
+            let offsetX = Phaser.Math.Between(-20, 20);
+            let offsetY = Phaser.Math.Between(10, 25);
+            let dropX = this.x + offsetX;
+            let dropY = this.y + offsetY;
+
+            this.scene.objects.push(new WoodLog(this.scene, dropX, dropY));
         }
     }
 }

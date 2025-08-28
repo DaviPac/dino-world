@@ -15,7 +15,6 @@ function getRect(o) {
             height,
         };
     } else {
-        // Fallback para objetos sem body (usa origin)
         const originX = o.originX ?? 0.5;
         const originY = o.originY ?? 0.5;
         const left = o.x - (o.width ?? 0) * originX;
@@ -36,36 +35,78 @@ function getRect(o) {
 }
 
 function overlap1D(a1, a2, b1, b2) {
-    // sobreposição estrita de intervalos [a1,a2) e [b1,b2)
     return a1 < b2 && a2 > b1;
 }
 
-function intersectXRect(a, b) {
-    return overlap1D(a.left, a.right, b.left, b.right);
+function intersectRect(a, b) {
+    return overlap1D(a.left, a.right, b.left, b.right) && 
+           overlap1D(a.top, a.bottom, b.top, b.bottom);
 }
 
-function intersectYRect(a, b) {
-    return overlap1D(a.top, a.bottom, b.top, b.bottom);
-}
-
-export function isInCuttingRange(src, target, threshold = 20) {
+export function isInCuttingRange(src, target, threshold = 10) {
     const A = getRect(src);
     const B = getRect(target);
 
     const dx = B.cx - A.cx;
     const dy = B.cy - A.cy;
-
-    // Mesma coluna (projeção X se sobrepõe) -> checa para cima/baixo
-    if (intersectXRect(A, B)) {
-        if (dy > 0) return src.facing === "down" && dy < (threshold * 1.22);
-        return src.facing === "up" && -dy < (threshold * 1.22);
+    
+    // Verifica se há sobreposição total (já se tocam)
+    if (intersectRect(A, B)) {
+        return true;
     }
 
-    // Mesma linha (projeção Y se sobrepõe) -> checa esquerda/direita
-    if (intersectYRect(A, B)) {
-        if (dx > 0) return src.facing === "right" && dx < threshold;
-        return src.facing === "left" && -dx < threshold;
+    // Define a área de corte baseada na direção que o src está facing
+    let cuttingArea;
+    
+    switch (src.facing) {
+        case "up":
+            cuttingArea = {
+                left: A.left - threshold/2,
+                right: A.right + threshold/2,
+                top: A.top - threshold,
+                bottom: A.top,
+                width: A.width + threshold,
+                height: threshold
+            };
+            break;
+            
+        case "down":
+            cuttingArea = {
+                left: A.left - threshold/2,
+                right: A.right + threshold/2,
+                top: A.bottom,
+                bottom: A.bottom + threshold,
+                width: A.width + threshold,
+                height: threshold
+            };
+            break;
+            
+        case "left":
+            cuttingArea = {
+                left: A.left - threshold,
+                right: A.left,
+                top: A.top - threshold/2,
+                bottom: A.bottom + threshold/2,
+                width: threshold,
+                height: A.height + threshold
+            };
+            break;
+            
+        case "right":
+            cuttingArea = {
+                left: A.right,
+                right: A.right + threshold,
+                top: A.top - threshold/2,
+                bottom: A.bottom + threshold/2,
+                width: threshold,
+                height: A.height + threshold
+            };
+            break;
+            
+        default:
+            return false;
     }
-
-    return false;
+    
+    // Verifica se o target intersecta com a área de corte
+    return intersectRect(cuttingArea, B);
 }
