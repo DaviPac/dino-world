@@ -1,6 +1,6 @@
 import Item from "./Item.js";
 
-export default class Fish extends Item {
+export default class FishItem extends Item {
     constructor() {
         super('fish-icon');
     }

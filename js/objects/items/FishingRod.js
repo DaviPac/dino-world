@@ -1,4 +1,4 @@
-import Fish from "./Fish.js";
+import Fish from "../Fish.js";
 
 export default class FishingRod {
     constructor() {
@@ -42,7 +42,7 @@ export default class FishingRod {
             user.isAttacking = false;
             user.removeAllListeners('animationupdate');
         });
-
-        user.inventory.items.push(new Fish());
+        
+        user.scene.objects.push(new Fish(user.scene, user.x, user.y));
     }
 }

@@ -2,6 +2,7 @@ export default class Inventory {
     constructor(items = []) {
         this.items = items;
         this.selectedIndex = items.length > 0 ? 0 : null;
+        this.limit = 8;
     }
 
     get equippedItem() {

@@ -1,10 +1,10 @@
-import WoodLogItem from "./items/WoodLog.js";
+import FishItem from "./items/FishItem.js";
 
-export default class WoodLog extends Phaser.Physics.Arcade.Sprite {
+export default class Fish extends Phaser.Physics.Arcade.Sprite {
     static nextId = 1;
 
     constructor(scene, x, y) {
-        super(scene, x, y, 'basic-tools-icons', 0);
+        super(scene, x, y, 'fish-icon');
         this.scene = scene;
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -12,12 +12,13 @@ export default class WoodLog extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(5);
         this.setSize(20, 20);
         this.collectable = true;
-        this.id = WoodLog.nextId++;
+        this.id = Fish.nextId++;
     }
 
     collect(user) {
         if (user.inventory.items.length >= user.inventory.limit) return;
-        user.inventory.items.push(new WoodLogItem());
+        console.log("COLLECTING");
+        user.inventory.items.push(new FishItem());
         let index = this.scene.objects.indexOf(this);
         if (index !== -1) this.scene.objects.splice(index, 1);
         this.destroy();
