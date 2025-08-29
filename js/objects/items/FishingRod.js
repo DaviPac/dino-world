@@ -19,9 +19,9 @@ export default class FishingRod {
         user.anims.play(animKey, true);
 
         user.removeAllListeners('animationupdate');
+        user.removeAllListeners('animationcomplete');
 
         user.once('animationcomplete', () => {
-            user.removeAllListeners('animationupdate');
             this.catchFish(user);
         });
     }
@@ -36,13 +36,10 @@ export default class FishingRod {
         
         user.anims.play(animKey, true);
 
-        user.removeAllListeners('animationupdate');
-
         user.once('animationcomplete', () => {
             user.isAttacking = false;
-            user.removeAllListeners('animationupdate');
+            user.removeAllListeners('animationcomplete');
+            user.scene.objects.push(new Fish(user.scene, user.x, user.y));
         });
-        
-        user.scene.objects.push(new Fish(user.scene, user.x, user.y));
     }
 }

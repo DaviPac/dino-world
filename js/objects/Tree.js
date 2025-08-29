@@ -1,16 +1,13 @@
+import GameObject from "./GameObject.js";
 import WoodLog from "./WoodLog.js";
 
-export default class Tree extends Phaser.Physics.Arcade.Sprite {
+export default class Tree extends GameObject {
     constructor(scene, x, y) {
         super(scene, x, y, 'tree', 3);
-        this.scene = scene;
-        scene.add.existing(this);
-        scene.physics.add.existing(this);
-        this.setImmovable(true);
-        this.body.setSize(20, 39).setOffset(6, 23);
-        this.setDepth(10);
+        this.body.setSize(20, 15).setOffset(6, 33);
         this.collide = true;
         this.hp = 3;
+        this.setDepth(y + 15);
     }
 
     onAxeHit() {
@@ -29,7 +26,6 @@ export default class Tree extends Phaser.Physics.Arcade.Sprite {
 
         if (this.hp == 0) {
             this.setFrame(4);
-            this.setSize(20, 25).setOffset(6, 37);
             let offsetX = Phaser.Math.Between(-20, 20);
             let offsetY = Phaser.Math.Between(10, 25);
             let dropX = this.x + offsetX;

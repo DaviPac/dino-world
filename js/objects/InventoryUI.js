@@ -15,7 +15,7 @@ export default class InventoryUI {
         const inventoryImage = this.scene.add.image(inventoryX, inventoryY, 'inventory-slots')
             .setScrollFactor(0)
             .setAlpha(0.7)
-            .setDepth(30);
+            .setDepth(300);
 
         const hitAreaSize = 16;
         const hitAreaOffset = 19;
@@ -23,7 +23,7 @@ export default class InventoryUI {
         for (let i = 0; i < slotCount; i++) {
             const slot = this.scene.add.rectangle(inventoryItemX + i * hitAreaOffset, inventoryItemY, hitAreaSize, hitAreaSize)
                 .setScrollFactor(0)
-                .setDepth(31)
+                .setDepth(310)
                 .setInteractive();
 
             slot.on('pointerdown', () => {
@@ -40,7 +40,7 @@ export default class InventoryUI {
 
         this.selectedSlotImage = this.scene.add.image(0, 0, 'selected-slot')
             .setScrollFactor(0)
-            .setDepth(33)
+            .setDepth(330)
             .setVisible(false);
     }
 
@@ -62,7 +62,7 @@ export default class InventoryUI {
 
             const itemImage = this.scene.add.image(inventoryItemX + (index * hitAreaOffset), inventoryItemY, icon.key, frame)
                 .setScrollFactor(0)
-                .setDepth(32);
+                .setDepth(320);
 
             this.itemImages.push(itemImage);
         });

@@ -5,6 +5,7 @@ import { isMobile } from "../utils/isMobile.js";
 import InventoryUI from "../objects/InventoryUI.js";
 import DPadUI from "../objects/DPadUI.js";
 import InputHandler from "../InputHandler.js";
+import Dino from "../objects/Dino.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
@@ -51,6 +52,7 @@ export default class GameScene extends Phaser.Scene {
         this.objects.push(new Tree(this, 200, 185));
         this.objects.push(new Tree(this, 240, 185));
         this.objects.push(new Tree(this, 280, 185));
+        this.objects.push(new Dino(this, 60, 115));
 
         this.physics.add.collider(this.player, chaoLayer);
         this.objects.forEach((object) => {

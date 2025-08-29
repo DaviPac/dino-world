@@ -1,6 +1,6 @@
 import PlayerAnimator from "../PlayerAnimator.js";
 import Inventory from "./Inventory.js";
-import Axe from "./items/Axe.js";
+import Axe from "./items/axe.js";
 import FishingRod from "./items/FishingRod.js";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
@@ -14,7 +14,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds(true);
         this.setScale(1.3);
         this.setSize(12, 7).setOffset(10, 19);
-        this.setDepth(10);
+        this.setDepth(y);
 
         this.speed = 80;
         this.lastDirection = 'down';
@@ -29,6 +29,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         if (this.isAttacking) return;
+        this.setDepth(this.y);
 
         const moveVector = this.inputHandler.moveVector;
         this.setVelocity(moveVector.x * this.speed, moveVector.y * this.speed);

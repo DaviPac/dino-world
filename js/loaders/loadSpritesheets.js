@@ -20,4 +20,10 @@ export default function loadSpritesheets(scene) {
     scene.load.spritesheet('basic-tools-icons', 'assets/sprites/pack/icons/Weapons/basic.png', {
         frameWidth: 16, frameHeight: 16
     });
+    scene.load.spritesheet('fence-wood', 'assets/sprites/pack/exterior/fence-bridge/fence-wood.png', {
+        frameWidth: 16, frameHeight: 16
+    });
+    scene.load.spritesheet('dino-side', 'assets/sprites/pack/dino/dino_side.png', {
+        frameWidth: 512, frameHeight: 454
+    });
 }
