@@ -110,3 +110,27 @@ export function isInCuttingRange(src, target, threshold = 10) {
     // Verifica se o target intersecta com a área de corte
     return intersectRect(cuttingArea, B);
 }
+
+export function isInRightFenceRange(src, target, threshold = 15) {
+    let yDiff = Math.abs(src.y - target.y);
+    let xDiff = target.x - src.x;
+    return yDiff <= 5 && xDiff >= -2 && xDiff <= threshold;
+}
+
+export function isInLeftFenceRange(src, target, threshold = 15) {
+    let yDiff = Math.abs(src.y - target.y);
+    let xDiff = src.x - target.x;
+    return yDiff <= 5 && xDiff >= -2 && xDiff <= threshold;
+}
+
+export function isInTopFenceRange(src, target, threshold = 15) {
+    let xDiff = Math.abs(src.x - target.x);
+    let yDiff = src.y - target.y;
+    return xDiff <= 5 && yDiff >= -2 && yDiff <= threshold;
+}
+
+export function isInBottomFenceRange(src, target, threshold = 15) {
+    let xDiff = Math.abs(src.x - target.x);
+    let yDiff = target.y - src.y;
+    return xDiff <= 5 && yDiff >= -2 && yDiff <= threshold;
+}

@@ -1,4 +1,4 @@
-import PlayerAnimator from "../PlayerAnimator.js";
+import PlayerAnimator from "../systems/PlayerAnimator.js";
 import Inventory from "./Inventory.js";
 import Axe from "./items/Axe.js";
 import FishingRod from "./items/FishingRod.js";

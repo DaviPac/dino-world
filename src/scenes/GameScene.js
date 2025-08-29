@@ -1,11 +1,11 @@
-import Player from "../objects/Player.js";
-import Tree from "../objects/Tree.js";
+import Player from "../entities/Player.js";
+import Tree from "../entities/Tree.js";
 import { isInCuttingRange } from "../utils/range.js";
 import { isMobile } from "../utils/isMobile.js";
-import InventoryUI from "../objects/InventoryUI.js";
-import DPadUI from "../objects/DPadUI.js";
-import InputHandler from "../InputHandler.js";
-import Dino from "../objects/Dino.js";
+import InventoryUI from "../ui/InventoryUI.js";
+import DPadUI from "../ui/DPadUI.js";
+import InputHandler from "../systems/InputHandler.js";
+import Dino from "../entities/Dino.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
