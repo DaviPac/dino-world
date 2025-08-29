@@ -1,6 +1,6 @@
 import PlayerAnimator from "../PlayerAnimator.js";
 import Inventory from "./Inventory.js";
-import Axe from "./items/axe.js";
+import Axe from "./items/Axe.js";
 import FishingRod from "./items/FishingRod.js";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
