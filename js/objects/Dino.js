@@ -6,7 +6,8 @@ export default class Dino extends GameObject {
         this.setScale(0.1);
         this.collide = true;
         this.hp = 3;
-        this.setDepth(y + 15);
+        this.setDepth(y + 10);
+        this.setSize(400, 250).setOffset(0, 200);
         this.anims.create({
             key: 'dino-walk-anim',
             frames: this.anims.generateFrameNumbers('dino-side', { start: 0, end: 3 }),
@@ -31,8 +32,6 @@ export default class Dino extends GameObject {
             this.scene.sound.play('axe-tree', { volume: 0.8 });
     
             if (this.hp == 0) {
-                let index = this.scene.objects.indexOf(this);
-                if (index !== -1) this.scene.objects.splice(index, 1);
                 this.destroy();
             }
         }

@@ -13,8 +13,6 @@ export default class CollectableObject extends GameObject {
     collect(user) {
         if (user.inventory.items.length >= user.inventory.limit) return;
         user.inventory.items.push(new this.collectableItem());
-        let index = this.scene.objects.indexOf(this);
-        if (index !== -1) this.scene.objects.splice(index, 1);
         this.destroy();
     }
 }

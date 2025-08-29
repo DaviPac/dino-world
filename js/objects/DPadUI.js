@@ -18,14 +18,14 @@ export default class DPadUI {
         const dpadImage = this.scene.add.image(dpadX, dpadY, 'dpad');
         dpadImage.setScrollFactor(0);
         dpadImage.setAlpha(0.7);
-        dpadImage.setDepth(30);
+        dpadImage.setDepth(300);
         dpadImage.setScale(0.4);
 
         const dpadUseButton = this.scene.add.image(btnX, btnY, 'dpad-use-button');
         dpadUseButton.setScrollFactor(0);
         dpadUseButton.setScale(0.1);
         dpadUseButton.setAlpha(0.7);
-        dpadUseButton.setDepth(30);
+        dpadUseButton.setDepth(300);
 
         const hitAreaSize = 27;
         const hitAreaOffset = 20;
@@ -45,7 +45,7 @@ export default class DPadUI {
 
         zones.forEach((zone, index) => {
             zone.setScrollFactor(0);
-            zone.setDepth(31);
+            zone.setDepth(310);
             zone.setInteractive();
 
             zone.on('pointerdown', () => {

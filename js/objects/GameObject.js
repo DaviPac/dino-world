@@ -10,4 +10,12 @@ export default class GameObject extends Phaser.Physics.Arcade.Sprite {
         this.setDepth(y + (this.displayHeight / 2));
         this.id = GameObject.nextId++;
     }
+
+    destroy() {
+        if (this.scene.objects) {
+            let index = this.scene.objects.indexOf(this);
+            if (index !== -1) this.scene.objects.splice(index, 1);
+            super.destroy();
+        }
+    }
 }
