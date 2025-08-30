@@ -1,11 +1,11 @@
 import GameObject from "./GameObject.js";
+import WoodLog from "./WoodLog.js";
 
 export default class WoodFence extends GameObject {
     constructor(scene, x, y) {
         super(scene, x, y, 'fence-wood', 25);
         this.body.setSize(10, 12).setOffset(3, 5);
         this.collide = true;
-        //this.hp = 3;
         scene.physics.add.collider(scene.player, this);
         this.setDepth(y - 2);
         this.states = [
@@ -53,7 +53,7 @@ export default class WoodFence extends GameObject {
                     this.setFrame(20);
                     break;
                 case "side-top":
-                    this.setFrame(25);
+                    this.setFrame(6);
                     break;
                 case "side-middle":
                     this.setFrame(6);
@@ -74,10 +74,10 @@ export default class WoodFence extends GameObject {
                     this.setFrame(2);
                     break;
                 case "middle-left":
-                    this.setFrame(19);
+                    this.setFrame(0);
                     break;
                 case "middle-right":
-                    this.setFrame(20);
+                    this.setFrame(2);
                     break;
                 case "middle-middle":
                     this.setFrame(13);
@@ -90,5 +90,11 @@ export default class WoodFence extends GameObject {
                     break;
             }
         }
+    }
+
+    onAxeHit() {
+        this.scene.sound.play('axe-tree', { volume: 0.8 });
+        this.scene.objects.push(new WoodLog(this.scene, this.x, this.y));
+        this.destroy()
     }
 }

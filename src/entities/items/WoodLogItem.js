@@ -12,9 +12,8 @@ export default class WoodLogItem extends Item {
         let x = user.x;
         let y = user.y;
         
-        // Melhor posicionamento baseado na direção
         if (user.facing === 'up') {
-            y -= 16;
+            y -= 8;
         } else if (user.facing === 'down') {
             y += 16;
         } else if (user.facing === 'left') {
@@ -23,7 +22,6 @@ export default class WoodLogItem extends Item {
             x += 16;
         }
         
-        // Snap para grid para melhor alinhamento (grid de 12x10 para matching das cercas)
         x = Math.round(x / 12) * 12;
         y = Math.round(y / 10) * 10;
         
@@ -31,7 +29,6 @@ export default class WoodLogItem extends Item {
     }
 
     placeFence(scene, x, y) {
-        // Verifica se já existe uma cerca na posição exata
         let existingFence = scene.objects.find(obj => 
             obj instanceof WoodFence && 
             Math.abs(obj.x - x) < 6 && 
@@ -39,28 +36,27 @@ export default class WoodLogItem extends Item {
         );
         
         if (existingFence) {
-            return; // Não coloca se já existe uma cerca muito próxima
+            return;
         }
 
         console.log("placing fence at", x, y);
 
         let woodFence = new WoodFence(scene, x, y);
         
-        // Adiciona a cerca primeiro aos objetos para que as funções de conexão possam encontrá-la
         scene.objects.push(woodFence);
         
-        // Encontra conexões após adicionar a cerca
         let connections = this.findConnections(scene, woodFence);
         
         if (connections.length === 0) {
-            // Cerca isolada
             woodFence.state = "alone";
         } else {
-            // Conecta com cercas próximas - mas não move a posição da cerca
             this.updateFenceStates(scene, woodFence, connections);
         }
         
         woodFence.setDepth(woodFence.y - 2);
+        let inventory = scene.player.inventory;
+        let index = inventory.items.indexOf(this);
+        if (index !== -1) inventory.items.splice(index, 1);
     }
 
     findConnections(scene, targetFence) {
@@ -91,10 +87,8 @@ export default class WoodLogItem extends Item {
     }
 
     updateFenceStates(scene, newFence, connections) {
-        // Atualiza o estado da nova cerca
         this.updateSingleFenceState(scene, newFence);
         
-        // Atualiza os estados das cercas conectadas
         connections.forEach(connection => {
             this.updateSingleFenceState(scene, connection.fence);
         });
@@ -114,9 +108,7 @@ export default class WoodLogItem extends Item {
         let hasTop = verticalConnections.some(c => c.direction === 'top');
         let hasBottom = verticalConnections.some(c => c.direction === 'bottom');
         
-        console.log(`Fence at (${fence.x}, ${fence.y}):`, {hasLeft, hasRight, hasTop, hasBottom});
         
-        // Lógica de estados corrigida e simplificada
         if (hasLeft && hasRight && hasTop && hasBottom) {
             fence.state = "middle-middle";
         } else if (hasLeft && hasRight && hasTop) {
