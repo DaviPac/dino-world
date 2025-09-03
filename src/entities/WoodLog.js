@@ -1,7 +1,7 @@
-import CollectableObject from "./CollectableObject.js";
+import Collectable from "./Collectable.js";
 import WoodLogItem from "./items/WoodLogItem.js";
 
-export default class WoodLog extends CollectableObject {
+export default class WoodLog extends Collectable {
     static nextId = 1;
 
     constructor(scene, x, y) {

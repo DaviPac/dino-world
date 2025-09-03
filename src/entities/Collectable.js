@@ -1,6 +1,6 @@
-import GameObject from "./GameObject.js";
+import Entity from "./Entity.js";
 
-export default class CollectableObject extends GameObject {
+export default class Collectable extends Entity {
     constructor(scene, x, y, sprite, collectableItem, frame = 0) {
         super(scene, x, y, sprite, frame);
         this.collectableItem = collectableItem;

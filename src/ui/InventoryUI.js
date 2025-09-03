@@ -4,6 +4,7 @@ export default class InventoryUI {
         this.slots = [];
         this.itemImages = [];
         this.selectedSlotImage = null;
+        this.createInventorySlots();
     }
 
     createInventorySlots(slotCount = 8) {

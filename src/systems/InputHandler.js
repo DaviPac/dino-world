@@ -1,7 +1,19 @@
 export default class InputHandler {
-    constructor(scene, cursors, dpad) {
+    constructor(scene, dpad) {
         this.scene = scene;
-        this.cursors = cursors;
+
+        this.cursors = scene.input.keyboard.createCursorKeys();
+        this.cursors.muteKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
+        this.cursors.one   = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
+        this.cursors.two   = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
+        this.cursors.three = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
+        this.cursors.four  = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR);
+        this.cursors.five  = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE);
+        this.cursors.six   = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
+        this.cursors.seven = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SEVEN);
+        this.cursors.eight = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.EIGHT);
+        this.cursors.nine  = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NINE);
+
         this.dpadState = dpad ? dpad.dpadState : { up: false, down: false, left: false, right: false, use: false };
         this.dpadJustDownState = dpad ? dpad.justDownState : { up: false, down: false, left: false, right: false, use: false };
     }
@@ -36,4 +48,6 @@ export default class InputHandler {
     get inventory7Pressed() { return Phaser.Input.Keyboard.JustDown(this.cursors.seven); }
     get inventory8Pressed() { return Phaser.Input.Keyboard.JustDown(this.cursors.eight); }
     get inventory9Pressed() { return Phaser.Input.Keyboard.JustDown(this.cursors.nine); }
+
+    get muteKeyPressed() { return Phaser.Input.Keyboard.JustDown(this.cursors.muteKey); }
 }

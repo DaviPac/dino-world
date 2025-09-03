@@ -1,11 +1,12 @@
-import GameObject from "./GameObject.js";
+import Entity from "./Entity.js";
 import WoodLog from "./WoodLog.js";
 
-export default class Tree extends GameObject {
+export default class Tree extends Entity {
     constructor(scene, x, y) {
         super(scene, x, y, 'tree', 3);
         this.body.setSize(20, 15).setOffset(6, 33);
         this.collide = true;
+        scene.physics.add.collider(scene.player, this);
         this.hp = 3;
         this.setDepth(y + 15);
     }
@@ -26,12 +27,7 @@ export default class Tree extends GameObject {
 
         if (this.hp == 0) {
             this.setFrame(4);
-            let offsetX = Phaser.Math.Between(-20, 20);
-            let offsetY = Phaser.Math.Between(10, 25);
-            let dropX = this.x + offsetX;
-            let dropY = this.y + offsetY;
-
-            this.scene.objects.push(new WoodLog(this.scene, dropX, dropY));
+            this.drop(WoodLog, 3);
         }
     }
 }

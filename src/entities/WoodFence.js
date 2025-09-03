@@ -1,7 +1,7 @@
-import GameObject from "./GameObject.js";
+import Entity from "./Entity.js";
 import WoodLog from "./WoodLog.js";
 
-export default class WoodFence extends GameObject {
+export default class WoodFence extends Entity {
     constructor(scene, x, y) {
         super(scene, x, y, 'fence-wood', 25);
         this.body.setSize(10, 12).setOffset(3, 5);
@@ -94,7 +94,7 @@ export default class WoodFence extends GameObject {
 
     onAxeHit() {
         this.scene.sound.play('axe-tree', { volume: 0.8 });
-        this.scene.objects.push(new WoodLog(this.scene, this.x, this.y));
-        this.destroy()
+        this.drop(WoodLog);
+        this.destroy();
     }
 }

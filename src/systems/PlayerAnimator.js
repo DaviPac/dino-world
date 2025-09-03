@@ -42,7 +42,6 @@ export default class PlayerAnimator {
                 this.player.anims.play('walk_down', true);
             }
         } else {
-            // Lógica para idle
             if (direction === 'left' || direction === 'right') {
                 this.player.anims.play('idle_side', true);
             } else if (direction === 'up') {

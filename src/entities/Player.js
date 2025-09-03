@@ -1,16 +1,14 @@
 import PlayerAnimator from "../systems/PlayerAnimator.js";
+import Entity from "./Entity.js";
 import Inventory from "./Inventory.js";
 import Axe from "./items/Axe.js";
 import FishingRod from "./items/FishingRod.js";
 
-export default class Player extends Phaser.Physics.Arcade.Sprite {
+export default class Player extends Entity {
     constructor(scene, x, y, inputHandler) {
         super(scene, x, y, 'player_idle');
 
-        this.scene = scene;
-        this.scene.add.existing(this);
-        this.scene.physics.add.existing(this);
-
+        this.setImmovable(false);
         this.setCollideWorldBounds(true);
         this.setScale(1.3);
         this.setSize(12, 7).setOffset(10, 19);

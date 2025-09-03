@@ -6,11 +6,12 @@ import InventoryUI from "../ui/InventoryUI.js";
 import DPadUI from "../ui/DPadUI.js";
 import InputHandler from "../systems/InputHandler.js";
 import Dino from "../entities/Dino.js";
+import CameraManager from "../systems/CameraManager.js"
+import AudioManager from "../systems/AudioManager.js";
 
 export default class GameScene extends Phaser.Scene {
     constructor() {
         super({ key: 'GameScene' });
-        this.dpadState = {};
         this.objects = [];
         this.musicPlaying = true;
         const temp = localStorage.getItem('music');
@@ -19,67 +20,21 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         if (isMobile(this)) this.dpad = new DPadUI(this);
-
-        this.map = this.make.tilemap({ key: 'mapa_mundo' });
-        const tileset1 = this.map.addTilesetImage('Tileset Grass Spring', 'tiles_terreno');
-        const tileset2 = this.map.addTilesetImage('Ground', 'tiles_ground');
-        const aguaLayer = this.map.createLayer('Camada de Blocos 2', [tileset1, tileset2], 0, 0);
-        aguaLayer.setDepth(1);
-        const chaoLayer = this.map.createLayer('Camada de Blocos 1', [tileset1, tileset2], 0, 0);
-        chaoLayer.setDepth(5);
-        try {
-            chaoLayer.setCollision([11, 12, 31, 60, 396, 439, 444, 466, 468]);
-        } catch (error) { }
-
-        this.cursors = this.input.keyboard.createCursorKeys();
-        this.cursors.muteKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.M);
-        this.cursors.one = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ONE);
-        this.cursors.two = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.TWO);
-        this.cursors.three = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.THREE);
-        this.cursors.four = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR);
-        this.cursors.five = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE);
-        this.cursors.six = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SIX);
-        this.cursors.seven = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SEVEN);
-        this.cursors.eight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.EIGHT);
-        this.cursors.nine = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.NINE);
-
-        this.inputHandler = new InputHandler(this, this.cursors, this.dpad);
+        this.setupMap();
+        this.inputHandler = new InputHandler(this, this.dpad);
         this.player = new Player(this, 100, 100, this.inputHandler);
-
-        this.objects.push(new Tree(this, 200, 115));
-        this.objects.push(new Tree(this, 240, 115));
-        this.objects.push(new Tree(this, 280, 115));
-        this.objects.push(new Tree(this, 200, 185));
-        this.objects.push(new Tree(this, 240, 185));
-        this.objects.push(new Tree(this, 280, 185));
-        this.objects.push(new Dino(this, 60, 115));
-
-        this.physics.add.collider(this.player, chaoLayer);
-        this.objects.forEach((object) => {
-            if (object.collide) this.physics.add.collider(this.player, object);
-        });
-
-        const bgMusic = this.sound.add('bg_music_1', { 
-            loop: true,
-            volume: this.musicPlaying ? 1.5 : 0
-        });
-        
-        bgMusic.play();
-
-        this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
-        this.cameras.main.startFollow(this.player);
-        this.cameras.main.setZoom(3);
-
+        this.physics.add.collider(this.player, this.chaoLayer);
+        this.setupObjects();
+        this.audioManager = new AudioManager(this);
+        this.audioManager.play('bg_music_1');
+        this.cameraManager = new CameraManager(this);
         this.inventoryUI = new InventoryUI(this);
-        this.inventoryUI.createInventorySlots();
     }
 
     update() {
         if (this.dpad) this.dpad.update();
         this.inventoryUI.updateInventorySlots();
-        if (Phaser.Input.Keyboard.JustDown(this.cursors.muteKey)) {
-            this.toggleMusic();
-        }
+        if (this.inputHandler.muteKeyPressed) this.audioManager.toggleMute();
         if (this.player) {
             this.player.update();
                 this.objects.forEach((object) => {
@@ -91,13 +46,26 @@ export default class GameScene extends Phaser.Scene {
         }
     }
 
-    toggleMusic() {
-        this.musicPlaying = !this.musicPlaying;
-        localStorage.setItem('music', !this.musicPlaying);
-        let music = this.sound.get('bg_music_1');
-        if (this.musicPlaying) {
-            if (music) music.setVolume(0);
-        }
-        else if (music) music.setVolume(1.5);
+    setupMap() {
+        this.map = this.make.tilemap({ key: 'mapa_mundo' });
+        const tileset1 = this.map.addTilesetImage('Tileset Grass Spring', 'tiles_terreno');
+        const tileset2 = this.map.addTilesetImage('Ground', 'tiles_ground');
+        this.aguaLayer = this.map.createLayer('Camada de Blocos 2', [tileset1, tileset2], 0, 0);
+        this.aguaLayer.setDepth(1);
+        this.chaoLayer = this.map.createLayer('Camada de Blocos 1', [tileset1, tileset2], 0, 0);
+        this.chaoLayer.setDepth(5);
+        try {
+            this.chaoLayer.setCollision([11, 12, 31, 60, 396, 439, 444, 466, 468]);
+        } catch (error) { }
+    }
+    
+    setupObjects() {
+        this.objects.push(new Tree(this, 200, 115));
+        this.objects.push(new Tree(this, 240, 115));
+        this.objects.push(new Tree(this, 280, 115));
+        this.objects.push(new Tree(this, 200, 185));
+        this.objects.push(new Tree(this, 240, 185));
+        this.objects.push(new Tree(this, 280, 185));
+        this.objects.push(new Dino(this, 60, 115));
     }
 }

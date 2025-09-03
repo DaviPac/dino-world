@@ -1,4 +1,4 @@
-export default class GameObject extends Phaser.Physics.Arcade.Sprite {
+export default class Entity extends Phaser.Physics.Arcade.Sprite {
     static nextId = 1;
 
     constructor(scene, x, y, sprite, frame = 0) {
@@ -8,7 +8,18 @@ export default class GameObject extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setImmovable(true);
         this.setDepth(y + (this.displayHeight / 2));
-        this.id = GameObject.nextId++;
+        this.id = Entity.nextId++;
+    }
+
+    drop(drop, ammount = 1) {
+        for (let i = 0; i < ammount; i++) {
+            let offsetX = Phaser.Math.Between(-20, 20);
+            let offsetY = Phaser.Math.Between(10, 25);
+            let dropX = this.x + offsetX;
+            let dropY = this.y + offsetY;
+            
+            this.scene.objects.push(new drop(this.scene, dropX, dropY));
+        }
     }
 
     destroy() {
